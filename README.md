@@ -2,8 +2,6 @@
 ## Purpose
 I would like to sharpen my programming skills so I will be building out my own version of the java collection framework
 ## To Do
-### ArrayList
-* add dynamic capacity, eg. grow() method
 ### Add the rest of the rest of the collection framework
 * List Interface
 * Abstract List class
