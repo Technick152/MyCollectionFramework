@@ -5,7 +5,6 @@ I would like to sharpen my programming skills so I will be building out my own v
 ### ArrayList
 * add dynamic capacity, eg. grow() method
 ### Add the rest of the rest of the collection framework
-* Collection Interface
 * List Interface
 * Abstract List class
 * Vector Class
