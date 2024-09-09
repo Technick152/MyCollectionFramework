@@ -2,19 +2,20 @@ package MyCollectionFramework;
 
 import java.util.NoSuchElementException;
 import java.util.Arrays;
+
 /**
  *<p>A List that can be traversed the same as an array, with the added benefit of being able
  *  to add or remove any element from any index in the array</p>
  * @author Nicolas Alvarez
- * @version 1.1
+ * @version 1.2
  * */
-public class ArrayList<E> {
+public class ArrayList<E>{
 
     private static final int DEFAULT_CAPACITY = 10;
 
     private static int capacity;
 
-    transient Object[] elementData;
+    private transient Object[] elementData;
 
     private int size = 0;
 
@@ -46,14 +47,8 @@ public class ArrayList<E> {
     public ArrayList(Collection<? extends E> collection) {
 
         if ((size = collection.toArray().length) != 0) {
-            if (collection.getClass() == ArrayList.class) {
 
-                elementData = collection.toArray();
-            }
-            else {
-
-                elementData = Arrays.copyOf(collection.toArray(), size, Object[].class);
-            }
+            elementData = Arrays.copyOf(collection.toArray(), size, Object[].class);
         }
         else {
 
@@ -70,13 +65,36 @@ public class ArrayList<E> {
     }
 
     /**
+     * <p>Grows capacity of ArrayList by 1</p>
+     **/
+    public void grow(){
+
+        elementData = Arrays.copyOf(elementData, capacity + 1);
+        capacity++;
+    }
+
+    /**
+     * <p>Grows capacity of ArrayList by given amount</p>
+     * @param amountIncreased desired amount to grow ArrayList capacity by
+     **/
+    public void grow(int amountIncreased){
+
+        elementData = Arrays.copyOf(elementData, capacity + amountIncreased);
+        capacity += amountIncreased;
+    }
+
+    /**
      * <p>Adds an element at a designated index, resizes and shifts ArrayList accordingly</p>
      * @param index index for desired element to be added
      * @param element the desired element to be placed at given index
      **/
     public void add(int index, E element){
 
-        if(index <= size && size + 1 <= capacity) {
+        if(size + 1 > capacity){
+
+            grow();
+        }
+        if(index <= size) {
             for (int iterator = size - 1; iterator >= index; iterator--) {
 
                 elementData[iterator + 1] = elementData[iterator];
