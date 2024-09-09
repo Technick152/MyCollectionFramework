@@ -1,15 +1,18 @@
 package MyCollectionFramework;
 
 import java.util.NoSuchElementException;
+import java.util.Arrays;
 /**
  *<p>A List that can be traversed the same as an array, with the added benefit of being able
  *  to add or remove any element from any index in the array</p>
- * @Author Nicolas Alvarez
- * @Version 1.0
+ * @author Nicolas Alvarez
+ * @version 1.1
  * */
 public class ArrayList<E> {
 
     private static final int DEFAULT_CAPACITY = 10;
+
+    private static int capacity;
 
     transient Object[] elementData;
 
@@ -25,9 +28,11 @@ public class ArrayList<E> {
         if (initialCapacity > 0) {
 
             this.elementData = new Object[initialCapacity];
+            capacity = initialCapacity;
         } else if (initialCapacity == 0) {
 
             this.elementData = new Object[]{};
+            capacity = initialCapacity;
         } else {
 
             throw new IllegalArgumentException("Illegal Capacity: "+ initialCapacity);
@@ -35,21 +40,33 @@ public class ArrayList<E> {
     }
 
     /**
-     *<p>Constructs empty ArrayList of default capacity(10)</p>
+     * <p>Constructs ArrayList given another Collection</p>
+     * @param collection the desired Collection to construct the ArrayList from
      **/
+    public ArrayList(Collection<? extends E> collection) {
+
+        if ((size = collection.toArray().length) != 0) {
+            if (collection.getClass() == ArrayList.class) {
+
+                elementData = collection.toArray();
+            }
+            else {
+
+                elementData = Arrays.copyOf(collection.toArray(), size, Object[].class);
+            }
+        }
+        else {
+
+            elementData = new Object[]{};
+        }
+    }
+
+            /**
+             *<p>Constructs empty ArrayList of default capacity(10)</p>
+             **/
     public ArrayList(){
 
         this.elementData = new Object[DEFAULT_CAPACITY];
-    }
-
-    /**
-     * <p>Appends list with given element resizing afterwards</p>
-     * @param element desired elements to add to list
-     **/
-    public void add(E element){
-
-        elementData[size] = element;
-        size++;
     }
 
     /**
@@ -59,7 +76,7 @@ public class ArrayList<E> {
      **/
     public void add(int index, E element){
 
-        if(index <= size) {
+        if(index <= size && size + 1 <= capacity) {
             for (int iterator = size - 1; iterator >= index; iterator--) {
 
                 elementData[iterator + 1] = elementData[iterator];
@@ -70,6 +87,15 @@ public class ArrayList<E> {
 
             throw new IndexOutOfBoundsException("Index " + index + " exceeds size of ArrayList(size = " + size + ")" );
         }
+    }
+
+    /**
+     * <p>Appends list with given element resizing afterwards</p>
+     * @param element desired elements to add to list
+     **/
+    public void add(E element){
+
+        add(size, element);
     }
 
     /**
@@ -92,7 +118,7 @@ public class ArrayList<E> {
 
     /**
      * <p>gets the size of ArrayList</p>
-     * @Returns: The size of the ArrayList
+     * @return The size of the ArrayList
      **/
     public int size(){
 
@@ -101,7 +127,7 @@ public class ArrayList<E> {
 
     /**
      *<p>checks if the ArrayList is empty</p>
-     * @Returns: 1 if size equals 0, else it returns 1
+     * @return 1 if size equals 0, else it returns 1
      **/
     public boolean isEmpty(){
 
@@ -121,7 +147,7 @@ public class ArrayList<E> {
 
                 elementData[iterator] = elementData[iterator + 1];
             }
-        size--;
+            size--;
         }
         else{
 
@@ -163,12 +189,18 @@ public class ArrayList<E> {
      * <p>gets the element at given index as you would with an array,
      * if element is out of bounds throws IndexOutOfBounds Exception</p>
      * @param index the index of desired element
-     * @Returns: The element at the given index
+     * @return The element at the given index
      **/
     @SuppressWarnings("unchecked")
     public E get(int index){
+        if(index < size) {
 
-        return (E)elementData[index];
+            return (E) elementData[index];
+        }
+        else{
+
+            throw new IndexOutOfBoundsException("The given index is out of bounds of the ArrayList");
+        }
     }
 
     /**
@@ -191,21 +223,21 @@ public class ArrayList<E> {
 
     /**
      * <p>Method to return ArrayList as an Array</p>
-     * @Returns: returns Object array comprised of the ArrayList's elements
+     * @return returns Object array comprised of the ArrayList's elements
      * */
     public Object[] toArray(){
 
-            Object[] returnArray = new Object[size];
-            for (int iterator = 0; iterator < size; iterator++) {
+        Object[] returnArray = new Object[size];
+        for (int iterator = 0; iterator < size; iterator++) {
 
-                returnArray[iterator] = elementData[iterator];
-            }
-            return returnArray;
+            returnArray[iterator] = elementData[iterator];
+        }
+        return returnArray;
     }
 
     /**
      * <p>Method to return ArrayList as String</p>
-     * @Returns: String interpretation of ArrayList
+     * @return String interpretation of ArrayList
      * */
     @Override
     public String toString() {
@@ -220,5 +252,52 @@ public class ArrayList<E> {
         }
         return returnString.concat("]");
     }
-}
 
+    /**
+     * <p>Gets the boolean value of the given ArrayList equaling the base Arraylist</p>
+     * @param arrayList the desired ArrayList to compare
+     * @return true if the ArrayLists equal each other else false
+     **/
+    public boolean equals(ArrayList<?> arrayList){
+
+        if(size != arrayList.size()){
+
+            return false;
+        }
+        else{
+
+            for(int iterator = 0; iterator < size; iterator++){
+
+                if(get(iterator) != arrayList.get(iterator)){
+
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * <p>Gets the boolean value of the given Array equaling the Arraylist's elements</p>
+     * @param array the desired Array to compare
+     * @return true if the ArrayList's elements equal the array's elements else false
+     **/
+    public boolean equals(Object[] array){
+
+        if(size != array.length){
+
+            return false;
+        }
+        else{
+
+            for(int iterator = 0; iterator < size; iterator++){
+
+                if(get(iterator) != array[iterator]){
+
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
